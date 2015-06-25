@@ -9,7 +9,7 @@ class SessionsController < ApplicationController
   		redirect_to @user, notice: "Welcome back, #{@user.username}"
   	else
   		flash[:alert] = "There was a problem. Please try again!"
-  		render root_path
+  		redirect_to root_path
   	end
   end
 

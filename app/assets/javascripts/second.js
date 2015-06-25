@@ -191,7 +191,6 @@ function ShapesMap(_mapContainer, _deleteButton, _clearButton) {
 
 	// writing the JSON
 
-
 	// for adding commas between indices in an array
 	function comma(i) {
 		return (i > 0) ? ',' : '';
@@ -355,6 +354,7 @@ function ShapesMap(_mapContainer, _deleteButton, _clearButton) {
 		buf += ']}';
 
 		return buf;
+		print(buf);
 	}
 
 	// storage of the shapes
@@ -403,11 +403,13 @@ function ShapesMap(_mapContainer, _deleteButton, _clearButton) {
 	function shapesLoad() {
 		var start_length = _shapes.length;
 
+
+
 		var cookies = document.cookie.split(";");
 		for (var i = 0; i < cookies.length; i++) {
 			var key = cookies[i].substr(0, cookies[i].indexOf("="));
-			key = key.replace("/^\s+|\s+$/g", "");
-
+			// key = key.replace("/^\s+|\s+$/g", "");
+			key = key.trim();
 			if (key == "shapes") {
 				var value = cookies[i].substr(cookies[i].indexOf("=") + 1);
 
@@ -544,10 +546,8 @@ function ShapesMap(_mapContainer, _deleteButton, _clearButton) {
 
 			_newShapeNextId++;
 		}
-	// }
 
 	// creating the map!!!
-
 	function createMap(mapContainer) {
 		var center = new google.maps.LatLng(40.7127, -74.0059);
 
@@ -564,7 +564,6 @@ function ShapesMap(_mapContainer, _deleteButton, _clearButton) {
 	}
 
 	//creating the drawing manager!
-
 	function drawingManagerCreate() {
 		// create drawing manager
 
