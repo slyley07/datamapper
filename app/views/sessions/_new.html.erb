@@ -1,0 +1,13 @@
+<%= form_tag '/login', method: :post do %>
+	<div>
+		<%= email_field_tag :email, nil, placeholder: "Email" %>
+	</div>
+
+	<div>
+		<%= password_field_tag :password, nil, placeholder: "Password" %>
+	</div>
+
+	<div>
+		<%= submit_tag "Login!" %>
+	</div>
+<% end %>

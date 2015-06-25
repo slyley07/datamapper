@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+	<head>
+	  <title>
+	  	Datamapper
+	  </title>
+	  
+	  <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track' => true %>
+	  
+		<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?libraries=drawing">
+		</script>
+	  
+	  <%= javascript_include_tag 'application', 'data-turbolinks-track' => true %>
+	  
+	  <script type="text/javascript">
+		  function initialize() {
+		    var shapesMap = new ShapesMap(
+		      document.getElementById("map-canvas"), 
+		      document.getElementById("delete-button"),
+		      document.getElementById("clear-button"));
+			}
+
+			google.maps.event.addDomListener(window, 'load', initialize);
+	  </script>
+
+
+	  <%= csrf_meta_tags %>
+   <style>
+      html, body, #map-canvas {
+        height: 200px;
+        width: 200px
+        margin: 0px;
+        padding: 0px
+      }
+    </style>
+	</head>
+	
+	<body>
+		<%= flash[:notice] if flash[:notice] %>
+				
+		<%= flash[:alert] if flash[:alert] %>
+
+		<ul>
+			<li>
+				<%= link_to 'Map!', data_path %>
+			</li>
+
+			<% if current_user %>
+				<li>
+					<%= link_to 'Logout', logout_path, method: :delete %>
+				</li>
+			<% else %>
+				<li>
+					<%= link_to 'Home', root_path %>
+				</li>
+			<% end %>
+		</ul>
+		
+		<%= yield %>
+		
+		<%= yield :scripts %>
+
+	</body>  
+</html>
