@@ -5,27 +5,17 @@
 	  	Datamapper
 	  </title>
 	  
-	  <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track' => true %>
+	  <%= stylesheet_link_tag    'application', media: 'all' %>
 	  
 		<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?libraries=drawing">
 		</script>
 	  
-	  <%= javascript_include_tag 'application', 'data-turbolinks-track' => true %>
+	  <%= javascript_include_tag 'application' %>
 	  
-	  <script type="text/javascript">
-		  function initialize() {
-		    var shapesMap = new ShapesMap(
-		      document.getElementById("map-canvas"), 
-		      document.getElementById("delete-button"),
-		      document.getElementById("clear-button"));
-			}
-
-			google.maps.event.addDomListener(window, 'load', initialize);
-	  </script>
-
 
 	  <%= csrf_meta_tags %>
-   <style>
+
+    <style>
       html, body, #map-canvas {
         height: 200px;
         width: 200px
@@ -58,7 +48,7 @@
 		
 		<%= yield %>
 		
-		<%= yield :scripts %>
+		<%= yield :javascript %>
 
 	</body>  
 </html>
