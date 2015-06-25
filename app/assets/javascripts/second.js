@@ -13,6 +13,7 @@ function ShapesMap(_mapContainer, _deleteButton, _clearButton) {
 	var POLYGON = google.maps.drawing.OverlayType.POLYGON;
 	var POLYLINE = google.maps.drawing.OverlayType.POLYLINE;
 	var MARKER = google.maps.drawing.OverlayType.MARKER;
+	var infoWindow = new google.maps.InfoWindow
 
 	function typeDesc(type) {
 		switch (type) {
@@ -241,7 +242,6 @@ function ShapesMap(_mapContainer, _deleteButton, _clearButton) {
 		return buf;
 	}
 
-
 	// returns the path points of a polyline as JSON
 	function jsonMakePath(path) {
 		var n = path.getLength();
@@ -257,7 +257,6 @@ function ShapesMap(_mapContainer, _deleteButton, _clearButton) {
 
 		return buf;
 	}
-
 
 	// returns the path points of all of the paths of a polygon as JSON
 	function jsonMakePaths(paths) {
@@ -368,6 +367,7 @@ function ShapesMap(_mapContainer, _deleteButton, _clearButton) {
 
 		for (var i = 0; i < _shapes.length && !found; i++) {
 			if (_shapes[i] === shape) {
+				infoClose();
 				_shapes.splice(i, 1);
 				found = true;
 			}
@@ -383,7 +383,7 @@ function ShapesMap(_mapContainer, _deleteButton, _clearButton) {
 
 	function shapesDeleteAll() {
 		print(_shapes.length + " shapes deleted\n");
-
+		infoClose();
 		_shapes.splice(0, _shapes.length);
 	}
 
@@ -402,8 +402,6 @@ function ShapesMap(_mapContainer, _deleteButton, _clearButton) {
 
 	function shapesLoad() {
 		var start_length = _shapes.length;
-
-
 
 		var cookies = document.cookie.split(";");
 		for (var i = 0; i < cookies.length; i++) {
@@ -435,7 +433,6 @@ function ShapesMap(_mapContainer, _deleteButton, _clearButton) {
 	}
 
 	//selecting specific shapes
-
 	function selectionPrint() {
 		if (_selection == null) {
 			print("selection cleared\n");
@@ -462,6 +459,7 @@ function ShapesMap(_mapContainer, _deleteButton, _clearButton) {
 		if (newSelection != null) {
 			_selection = newSelection;
 			_selection.setEditable(true);
+			createInfoWindow(_selection);
 		}
 
 		selectionPrint();
@@ -469,6 +467,7 @@ function ShapesMap(_mapContainer, _deleteButton, _clearButton) {
 
 	function selectionClear() {
 		selectionSet(null);
+		infoClose();
 	}
 
 	function selectionDelete() {
@@ -479,7 +478,6 @@ function ShapesMap(_mapContainer, _deleteButton, _clearButton) {
 	}
 
 	// adding new shapes to the map!
-
 	function newShapeAddPathListeners(shape, path) {
 		google.maps.event.addListener(
 			path,
@@ -536,16 +534,32 @@ function ShapesMap(_mapContainer, _deleteButton, _clearButton) {
 					newShapeAddPathListeners(shape, path);
 				}
 				break;
-
-			}
 		}
+	}
 
-		function newShapeSetProperties(shape, type) {
-			shape.type = type;
-			shape.appId = _newShapeNextId;
+	function newShapeSetProperties(shape, type) {
+		shape.type = type;
+		shape.appId = _newShapeNextId;
 
-			_newShapeNextId++;
-		}
+		_newShapeNextId++;
+	}
+
+	function createInfoWindow(shape) {
+		// var description = $('.description')
+		google.maps.event.addListener(shape,'click', function(event) {
+      infoWindow.setContent("TEST");
+      if (event) {
+         point = event.latLng;
+      }
+      infoWindow.setPosition(point);
+      infoWindow.open(_map);
+      // map.openInfoWindowHtml(point,html); 
+    });
+	}
+
+	function infoClose() {
+    infoWindow.close();
+	}
 
 	// creating the map!!!
 	function createMap(mapContainer) {
@@ -575,6 +589,7 @@ function ShapesMap(_mapContainer, _deleteButton, _clearButton) {
 		};
 
 		var polyOptions = {
+			draggable: true,
 			editable: true
 		};
 
@@ -582,7 +597,7 @@ function ShapesMap(_mapContainer, _deleteButton, _clearButton) {
 			drawingMode: null,
 			drawingControlOptions: drawingControlOptions,
 			markerOptions: { draggable: true },
-			polylineOptions: { editable: true },
+			polylineOptions: { draggable: true, editable: true, strokeWeight: 5 },
 			rectangleOptions: polyOptions,
 			circleOptions: polyOptions,
 			polygonOptions: polyOptions,
@@ -592,7 +607,6 @@ function ShapesMap(_mapContainer, _deleteButton, _clearButton) {
 		drawingManager = new google.maps.drawing.DrawingManager(drawingManagerOptions);
 
 		//tying events to maps
-
 		google.maps.event.addListener(
 			drawingManager,
 			'overlaycomplete',
@@ -617,25 +631,25 @@ function ShapesMap(_mapContainer, _deleteButton, _clearButton) {
 		newShapeSetProperties(shape, event.type);
 		newShapeAddListeners(shape);
 		shapesAdd(shape);
-		shapesSave()
+		shapesSave();
 		selectionSet(shape);
 
 		print("new " + typeDesc(event.type) + " created (id = " + shape.appId + ")\n");
 	}
 
 	function onShapeEdited(shape) {
-		print(shape.appId + " : shape edited\n");
+		print(shape.appId + ": shape edited\n");
 		shapesSave();
 	}
 
 	function onShapeClicked(shape) {
-		print(shape.appId + " : shape clicked\n");
+		print(shape.appId + ": shape clicked\n");
 		selectionSet(shape);
 	}
 
 	function onMapClicked() {
 		print("map clicked\n");
-		selectionClear();
+		selectionClear();  
 	}
 
 	function onDeleteButtonClicked() {
