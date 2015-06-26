@@ -1,5 +1,6 @@
 class User < ActiveRecord::Base
 	has_many :data
+	has_many :posts
 
 	validates :password, confirmation: true
 	validates_uniqueness_of :username, :email, :case_sensitive => false

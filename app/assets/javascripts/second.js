@@ -5,6 +5,8 @@ function ShapesMap(_mapContainer, _deleteButton, _clearButton) {
 	var _drawingManager = null;
 	var _newShapeNextId = 0;
 	var _shapes = Array();
+	var _point = 0;
+	var _newText = null;
 
 
 	// variables for the possible shapes in Google Maps API
@@ -445,6 +447,7 @@ function ShapesMap(_mapContainer, _deleteButton, _clearButton) {
 	}
 
 	function selectionSet(newSelection) {
+		infoClose(_selection);
 		if (newSelection == _selection) {
 			return;
 		}
@@ -464,8 +467,8 @@ function ShapesMap(_mapContainer, _deleteButton, _clearButton) {
 	}
 
 	function selectionClear() {
+		infoClose(_selection);
 		selectionSet(null);
-		infoClose();
 	}
 
 	function selectionDelete() {
@@ -542,105 +545,117 @@ function ShapesMap(_mapContainer, _deleteButton, _clearButton) {
 		_newShapeNextId++;
 	}
 
-	function getPosition(shape) {
-		google.maps.event.addListener(shape,'click', function(event) {
-	    if (event) {
-	      point = event.latLng;
-				return point;
-		    }
-		});
-	}
+
+	// function getNewText(){
+	// 		var _newText = $('#newText');
+	// 		return _newText;
+	// }
+
+	// function createInfoWindow(shape) {
+	// 	// google.maps.event.addListener(shape, 'click', function(event) {
+	//   //   if(shape.infoWindow === true) {
+	// 	// 	    infoClose();
+	//   //   } else {
+	// 	    createEditableInfo(shape)
+	// 			// , {
+	// 			// 	html: "Edit here!",
+	// 			// 	point: _point
+	// 			// });
+	//         // infoWindow = new google.maps.InfoWindow({position: _point});
+	// 				// infoWindow.open()
+	//     // bb}
+	//
+	//     // Update InfoWindow content
+	//
+	// 		// infoWindow.open(_map, shape)
+	// // });
+	// }
 	//
 	function createInfoWindow(shape) {
-		var infoWind = new google.maps.InfoWindow({
-										content: '<div contentEditable="true" '+
-															'style="height: 200px; width: auto">' +
-															'You can edit the text here!	</div>',
-										position: getPosition(shape),
-									});
+		infowindow = new google.maps.InfoWindow;
+
+		var html = $('.thang').html();
+
+		var options = {
+			html: html
+		}
 
 		google.maps.event.addListener(shape, 'click', function(event) {
-			infoWind.open(shape.getMap(), shape);
-		});
+				infowindow.setOptions({
+					content: options.html,
+					position: event.latLng
+				});
+				infowindow.open(_map, shape)
+				});
 
-		//
-		//
-	  //   var thing = createEditableInfo(shape, {
-	  //   	html : "You can edit the text in this box!",
-		// 		point : shape.getCenter()
-	  //   });
-		//
-		//
-		//
-		// google.maps.event.addListener(thing, "html_changed", function(){
-		// 	console.log(this.html);
-		// });
-	}
-	//
-	// function createEditableInfo(shape, options) {
-  //   //(2) Create a marker normally.
-  //   //Marker class accepts any properties even if it's not related with Marker.
-  //   // var marker = new google.maps.Marker(options);
-	//
-  //   //(3)Set a flag property which stands for the editing mode.
-  //   shape.set("editing", false);
-	//
-  //   //(4)Create a div element to display the HTML strings.
-  //   var htmlBox = document.createElement("div");
-  //   htmlBox.innerHTML = options.html || "";
-  //   htmlBox.style.width = "300px";
-  //   htmlBox.style.height = "100px";
-	//
-  //   //(5)Create a textarea for edit the HTML strings.
-  //   var textBox = document.createElement("textarea");
-  //   textBox.innerText = options.html || "";
-  //   textBox.style.width = "300px";
-  //   textBox.style.height = "100px";
-  //   textBox.style.display = "none";
-	//
-  //   //(6)Create a div element for container.
-  //   var container = document.createElement("div");
-  //   container.style.position = "relative";
-  //   container.appendChild(htmlBox);
-  //   container.appendChild(textBox);
-	//
-  //   //(7)Create a button to switch the edit mode
-  //   var editBtn = document.createElement("button");
-  //   editBtn.innerText = "Edit";
-  //   container.appendChild(editBtn);
-	//
-  //   //(8)Create an info window
-  //   var infoWnd = new google.maps.InfoWindow({
-  //     content : container,
-	// 		position : options.point
-  //   });
-	//
-  //   //(9)The info window appear when the marker is clicked.
-  //   google.maps.event.addListener(shape, "click", function() {
-  //     infoWnd.open(shape.getMap(), shape.options);
-  //   });
-	//
-  //   //(10)Switch the mode. Since Boolean type for editing property,
-  //   //the value can be change just negation.
-  //   google.maps.event.addDomListener(editBtn, "click", function() {
-  //     shape.set("editing", !shape.editing);
-  //   });
-	//
-  //   //(11)A (property)_changed event occurs when the property is changed.
-  //   google.maps.event.addListener(shape, "editing_changed", function(){
-  //     textBox.style.display = this.editing ? "block" : "none";
-  //     htmlBox.style.display = this.editing ? "none" : "block";
-  //   });
-	//
-  //   //(12)A change DOM event occur when the textarea is changed, then set the value into htmlBox.
-  //   google.maps.event.addDomListener(textBox, "change", function(){
-  //     htmlBox.innerHTML = textBox.value;
-  //     shape.set("html", textBox.value);
-  //   });
-  //   return shape;
-  // }
+		//(3)Set a flag property which stands for the editing mode.
+    shape.set("editing", false);
 
-	function infoClose() {
+    //(4)Create a div element to display the HTML strings.
+    var htmlBox = document.createElement("div");
+    htmlBox.innerHTML = options.html || "";
+    htmlBox.style.width = "300px";
+    htmlBox.style.height = "100px";
+
+    //(5)Create a textarea for edit the HTML strings.
+    var textBox = document.createElement("textarea");
+    textBox.innerText = options.html || "";
+    textBox.style.width = "300px";
+    textBox.style.height = "100px";
+    textBox.style.display = "none";
+
+    //(6)Create a div element for container.
+    var container = document.createElement("div");
+    container.style.position = "relative";
+    container.appendChild(htmlBox);
+    container.appendChild(textBox);
+
+    //(7)Create a button to switch the edit mode
+    var editBtn = document.createElement("button");
+    editBtn.innerText = "Edit";
+    container.appendChild(editBtn);
+
+    // google.maps.event.addListener(shape, "click", function(event) {
+		// 	if (event) {
+		//       _point = event.latLng;
+		// 			inf = infoWindow;
+		// 			// var options = {
+		// 	    //   content : "hello world",
+		// 			// 	position : _point
+		// 	    // };
+		// 			inf.InfoWindowOptions ({
+		// 				content : "hello world",
+		// 				position : _point
+		// 			});
+		// 			shape.infoWindow.open(_map, shape);
+		// 		}
+    // });
+    // (8)Create an info window
+		// console.log(_point);
+
+    // (9)The info window appear when the marker is clicked.
+
+    // (10)Switch the mode. Since Boolean type for editing property,
+    // the value can be change just negation.
+    google.maps.event.addDomListener(editBtn, "click", function() {
+      shape.set("editing", !shape.editing);
+    });
+
+    //(11)A (property)_changed event occurs when the property is changed.
+    google.maps.event.addListener(shape, "editing_changed", function(){
+      textBox.style.display = this.editing ? "block" : "none";
+      htmlBox.style.display = this.editing ? "none" : "block";
+    });
+
+    //(12)A change DOM event occur when the textarea is changed, then set the value into htmlBox.
+    google.maps.event.addDomListener(textBox, "change", function(){
+      htmlBox.innerHTML = textBox.value;
+      shape.set("html", textBox.value);
+    });
+    return shape;
+  }
+
+	function infoClose(shape) {
     infoWindow.close();
 	}
 
