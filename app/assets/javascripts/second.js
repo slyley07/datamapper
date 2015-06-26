@@ -41,8 +41,6 @@ function ShapesMap(_mapContainer, _deleteButton, _clearButton) {
 	}
 
 	// reading the JSON
-
-
 	// function for defining the paths of a polyline or polygon object
 	function jsonReadPath(jsonPath) {
 		// variable creating a new MVCArray (an object that Google provides natively)
@@ -125,7 +123,7 @@ function ShapesMap(_mapContainer, _deleteButton, _clearButton) {
 
 		return polyline;
 	}
-	
+
 	// function for defining the paths of a polygon object
 	function jsonReadPolygon(jsonPolygon) {
 		// variable creating an empty Google MVCArray (an object provided by Google API)
@@ -200,13 +198,13 @@ function ShapesMap(_mapContainer, _deleteButton, _clearButton) {
 	// returns the latitude and longitude of an object as JSON
 	function jsonMakeLatlon(latlon) {
 		var buf = '"lat":"' + latlon.lat() + '","lon":"' + latlon.lng() +'"';
-		
+
 		return buf;
 	}
 
 	// returns the bounds (defined by the NorthEast and SouthWest corners) of a rectangle as JSON
 	function jsonMakeBounds(bounds) {
-		var buf = 
+		var buf =
 			'"bounds":{'
 			+ '"northEast":{' + jsonMakeLatlon(bounds.getNorthEast()) + '},'
 			+ '"southWest":{' + jsonMakeLatlon(bounds.getSouthWest()) + '}'
@@ -276,7 +274,7 @@ function ShapesMap(_mapContainer, _deleteButton, _clearButton) {
 
 	// concatenates the type, fill color of the object, and the bounds of a rectangle
 	function jsonMakeRectangle(rectangle) {
-		var buf = 
+		var buf =
 			jsonMakeType(RECTANGLE) + ','
 			+ jsonMakeColor(rectangle.fillColor) + ','
 			+ jsonMakeBounds(rectangle.bounds);
@@ -297,7 +295,7 @@ function ShapesMap(_mapContainer, _deleteButton, _clearButton) {
 
 	// concatenates the type, color of the polyline, and the path points of a polyline
 	function jsonMakePolyline(polyline) {
-		var buf = 
+		var buf =
 			jsonMakeType(POLYLINE) + ','
 			+ jsonMakeColor(polyline.fillColor) + ','
 			+ jsonMakePath(polyline.getPath());
@@ -328,7 +326,7 @@ function ShapesMap(_mapContainer, _deleteButton, _clearButton) {
 			switch (_shapes[i].type)
 			{
 				case RECTANGLE:
-					// concatenating the jsonMakeRectangle function onto the end of the 'buf' variable 
+					// concatenating the jsonMakeRectangle function onto the end of the 'buf' variable
 					buf += comma(i) + '{' + jsonMakeRectangle(_shapes[i]) + '}';
 					break;
 
@@ -338,12 +336,12 @@ function ShapesMap(_mapContainer, _deleteButton, _clearButton) {
 					break;
 
 				case POLYLINE:
-					// concatenating the jsonMakePolyline function onto the end of the 'buf' variable 
+					// concatenating the jsonMakePolyline function onto the end of the 'buf' variable
 					buf += comma(i) + '{' + jsonMakePolyline(_shapes[i]) + '}';
 					break;
 
 				case POLYGON:
-					// concatenating the jsonMakePolygon function onto the end of the 'buf' variable 
+					// concatenating the jsonMakePolygon function onto the end of the 'buf' variable
 					buf += comma(i) + '{' + jsonMakePolygon(_shapes[i]) + '}';
 					break;
 			}
@@ -377,7 +375,7 @@ function ShapesMap(_mapContainer, _deleteButton, _clearButton) {
 	function shapesHideAll() {
 		for (var i = 0; i < _shapes.length; i++) {
 			// calling 'setMap(null)' on an object makes the object hidden on the map
-			_shapes[i].setMap(null);			
+			_shapes[i].setMap(null);
 		}
 	}
 
@@ -544,18 +542,103 @@ function ShapesMap(_mapContainer, _deleteButton, _clearButton) {
 		_newShapeNextId++;
 	}
 
-	function createInfoWindow(shape) {
-		// var description = $('.description')
+	function getPosition(shape) {
 		google.maps.event.addListener(shape,'click', function(event) {
-      infoWindow.setContent("TEST");
-      if (event) {
-         point = event.latLng;
-      }
-      infoWindow.setPosition(point);
-      infoWindow.open(_map);
-      // map.openInfoWindowHtml(point,html); 
-    });
+	    if (event) {
+	      point = event.latLng;
+				return point;
+		    }
+		});
 	}
+	//
+	function createInfoWindow(shape) {
+		var infoWind = new google.maps.InfoWindow({
+										content: '<div contentEditable="true" '+
+															'style="height: 200px; width: auto">' +
+															'You can edit the text here!	</div>',
+										position: getPosition(shape),
+									});
+
+		google.maps.event.addListener(shape, 'click', function(event) {
+			infoWind.open(shape.getMap(), shape);
+		});
+
+		//
+		//
+	  //   var thing = createEditableInfo(shape, {
+	  //   	html : "You can edit the text in this box!",
+		// 		point : shape.getCenter()
+	  //   });
+		//
+		//
+		//
+		// google.maps.event.addListener(thing, "html_changed", function(){
+		// 	console.log(this.html);
+		// });
+	}
+	//
+	// function createEditableInfo(shape, options) {
+  //   //(2) Create a marker normally.
+  //   //Marker class accepts any properties even if it's not related with Marker.
+  //   // var marker = new google.maps.Marker(options);
+	//
+  //   //(3)Set a flag property which stands for the editing mode.
+  //   shape.set("editing", false);
+	//
+  //   //(4)Create a div element to display the HTML strings.
+  //   var htmlBox = document.createElement("div");
+  //   htmlBox.innerHTML = options.html || "";
+  //   htmlBox.style.width = "300px";
+  //   htmlBox.style.height = "100px";
+	//
+  //   //(5)Create a textarea for edit the HTML strings.
+  //   var textBox = document.createElement("textarea");
+  //   textBox.innerText = options.html || "";
+  //   textBox.style.width = "300px";
+  //   textBox.style.height = "100px";
+  //   textBox.style.display = "none";
+	//
+  //   //(6)Create a div element for container.
+  //   var container = document.createElement("div");
+  //   container.style.position = "relative";
+  //   container.appendChild(htmlBox);
+  //   container.appendChild(textBox);
+	//
+  //   //(7)Create a button to switch the edit mode
+  //   var editBtn = document.createElement("button");
+  //   editBtn.innerText = "Edit";
+  //   container.appendChild(editBtn);
+	//
+  //   //(8)Create an info window
+  //   var infoWnd = new google.maps.InfoWindow({
+  //     content : container,
+	// 		position : options.point
+  //   });
+	//
+  //   //(9)The info window appear when the marker is clicked.
+  //   google.maps.event.addListener(shape, "click", function() {
+  //     infoWnd.open(shape.getMap(), shape.options);
+  //   });
+	//
+  //   //(10)Switch the mode. Since Boolean type for editing property,
+  //   //the value can be change just negation.
+  //   google.maps.event.addDomListener(editBtn, "click", function() {
+  //     shape.set("editing", !shape.editing);
+  //   });
+	//
+  //   //(11)A (property)_changed event occurs when the property is changed.
+  //   google.maps.event.addListener(shape, "editing_changed", function(){
+  //     textBox.style.display = this.editing ? "block" : "none";
+  //     htmlBox.style.display = this.editing ? "none" : "block";
+  //   });
+	//
+  //   //(12)A change DOM event occur when the textarea is changed, then set the value into htmlBox.
+  //   google.maps.event.addDomListener(textBox, "change", function(){
+  //     htmlBox.innerHTML = textBox.value;
+  //     shape.set("html", textBox.value);
+  //   });
+  //   return shape;
+  // }
 
 	function infoClose() {
     infoWindow.close();
@@ -624,7 +707,6 @@ function ShapesMap(_mapContainer, _deleteButton, _clearButton) {
 	}
 
 	// event capture
-
 	function onNewShape(event) {
 		var shape = event.overlay;
 
@@ -649,7 +731,7 @@ function ShapesMap(_mapContainer, _deleteButton, _clearButton) {
 
 	function onMapClicked() {
 		print("map clicked\n");
-		selectionClear();  
+		selectionClear();
 	}
 
 	function onDeleteButtonClicked() {
@@ -693,4 +775,4 @@ function ShapesMap(_mapContainer, _deleteButton, _clearButton) {
 	}
 
 	onCreate();
-}	
+}
