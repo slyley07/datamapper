@@ -8,7 +8,8 @@ Rails.application.routes.draw do
 
   resources :users
   resources :data
-  
+  resources :posts
+
   root 'welcome#index'
 
 end
