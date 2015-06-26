@@ -17,6 +17,9 @@
 
  body{
  	// outer-container(100%);
+   .thing {
+     display: none;
+   }
 
 	 #map-canvas {
 	 	width: 90%;
@@ -30,5 +33,5 @@
         top: 5px;
         right: 5px;
       }
- 	
+
  }

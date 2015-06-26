@@ -5,6 +5,7 @@ class DataController < ApplicationController
   end
 
   def index
+		@user = current_user
 		@post = Post.new
     # @shape = Datam.new(shape: cookies[:shapes])
     # @current_shapes = cookies[:shapes]
@@ -15,7 +16,7 @@ class DataController < ApplicationController
   end
 
   def create
-		@data = Post.new(params.require(:post).permit(:date, :website, :title, :address, :description).merge(user: current_user))
+		@post = Post.new(params.require(:post).permit(:date, :website, :title, :address, :description).merge(user: current_user))
   end
 
   def destroy
