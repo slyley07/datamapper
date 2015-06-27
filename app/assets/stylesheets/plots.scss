@@ -1,3 +1,33 @@
 // Place all the styles related to the Plots controller here.
 // They will automatically be included in application.css.
 // You can use Sass (SCSS) here: http://sass-lang.com/
+
+body{
+  font-family: 'Arimo', sans-serif;
+
+  .map {
+    @include span-columns(10 of 12);
+    @include shift(1 of 12);
+
+    #map-canvas{
+      height: 700px;
+      margin: 0 auto;
+    }
+  }
+
+  input[type=submit] {
+    color: #000000;
+    border: 2px solid black;
+    box-shadow: none;
+    background-color: #FFFFFF;
+    padding: 5px;
+  }
+
+  input[type=button] {
+    color: #000000;
+    border: 2px solid black;
+    box-shadow: none;
+    background-color: #FFFFFF;
+    padding: 5px;
+  }
+}

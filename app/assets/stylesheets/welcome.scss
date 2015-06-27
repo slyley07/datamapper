@@ -1,3 +1,115 @@
 // Place all the styles related to the Welcome controller here.
 // They will automatically be included in application.css.
 // You can use Sass (SCSS) here: http://sass-lang.com/
+
+body {
+  @include outer-container(100%);
+
+  nav{
+    @include span-columns(8);
+    @include shift(2);
+
+    h1 {
+      @include span-columns(6 of 8);
+      margin: 0;
+      font-size: 40px;
+    }
+
+    ul {
+      @include span-columns(2 of 8);
+      padding: 0px;
+      margin: 0;
+      list-style-type: none;
+
+      li {
+        display: inline-block;
+        margin: 0 2px;
+        border: 2px solid black;
+        padding: 5px;
+
+        a {
+          text-decoration: none;
+          color: #000000;
+          font-size: 20px;
+        }
+      }
+    }
+  }
+
+  .info {
+    @include span-columns(6);
+    @include shift(3);
+    font-size: 20px;
+    margin-top: 20px;
+  }
+
+  .forms {
+    @include span-columns(8);
+    @include shift(2);
+    margin-top: 30px;
+
+    .signin {
+      @include span-columns(5 of 8);
+      display: inline-block;
+
+      input {
+        margin: 7px;
+        // border-radius: 5px;
+        border: none;
+        border-bottom: 2px solid black;
+        font-size: 20px;
+
+      }
+
+      input:focus,
+      select:focus,
+      textarea:focus,
+      button:focus {
+          outline: none;
+      }
+
+      input[type=submit] {
+        color: #000000;
+        border: 2px solid black;
+        box-shadow: none;
+        background-color: #FFFFFF;
+        padding: 5px;
+      }
+
+    }
+
+    .signup {
+      @include span-columns(3 of 8);
+      display: inline-block;
+
+      h1{
+        @include span-columns(6);
+      }
+
+      input {
+        margin: 7px;
+        // border-radius: 5px;
+        border: none;
+        border-bottom: 2px solid black;
+        font-size: 20px;
+      }
+
+      input:focus,
+      select:focus,
+      textarea:focus,
+      button:focus {
+          outline: none;
+      }
+      input[type=submit] {
+        color: #000000;
+        border: 2px solid black;
+        box-shadow: none;
+        background-color: #FFFFFF;
+        padding: 5px;
+      }
+    }
+  }
+  .thing {
+    display: none;
+  }
+}
