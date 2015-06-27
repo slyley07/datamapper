@@ -7,6 +7,7 @@ function ShapesMap(_mapContainer, _deleteButton, _clearButton) {
 	var _shapes = Array();
 	var _point = 0;
 	var _newText = null;
+	var _json = null;
 
 
 	// variables for the possible shapes in Google Maps API
@@ -155,7 +156,8 @@ function ShapesMap(_mapContainer, _deleteButton, _clearButton) {
 
 
 	function jsonRead(json) {
-		var jsonObject = eval("(" + json + ")");
+		// take this out. eval is a security risk
+		var jsonObject = JSON.parse(json);
 
 		for (i = 0; i < jsonObject.shapes.length; i++) {
 			switch (jsonObject.shapes[i].type) {
@@ -222,6 +224,11 @@ function ShapesMap(_mapContainer, _deleteButton, _clearButton) {
 		return buf;
 	}
 
+	function jsonMakeId(shape) {
+		var buf = '"id":"' + shape.appId + '"';
+		return buf;
+	}
+
 	// returns the fill color of the object as JSON
 	function jsonMakeColor(color) {
 		var buf = '"color":"' + color + '"';
@@ -278,6 +285,7 @@ function ShapesMap(_mapContainer, _deleteButton, _clearButton) {
 	function jsonMakeRectangle(rectangle) {
 		var buf =
 			jsonMakeType(RECTANGLE) + ','
+			+ jsonMakeId(rectangle) + ','
 			+ jsonMakeColor(rectangle.fillColor) + ','
 			+ jsonMakeBounds(rectangle.bounds);
 
@@ -288,6 +296,7 @@ function ShapesMap(_mapContainer, _deleteButton, _clearButton) {
 	function jsonMakeCircle(circle) {
 		var buf =
 			jsonMakeType(CIRCLE) + ','
+			+ jsonMakeId(circle) + ','
 			+ jsonMakeColor(circle.fillColor) + ','
 			+ jsonMakeCenter(circle.center) + ','
 			+ jsonMakeRadius(circle.radius);
@@ -299,6 +308,7 @@ function ShapesMap(_mapContainer, _deleteButton, _clearButton) {
 	function jsonMakePolyline(polyline) {
 		var buf =
 			jsonMakeType(POLYLINE) + ','
+			+ jsonMakeId(polyline) + ','
 			+ jsonMakeColor(polyline.fillColor) + ','
 			+ jsonMakePath(polyline.getPath());
 
@@ -310,6 +320,7 @@ function ShapesMap(_mapContainer, _deleteButton, _clearButton) {
 	function jsonMakePolygon(polygon) {
 		var buf =
 			jsonMakeType(POLYGON) + ','
+			+ jsonMakeId(polygon) + ','
 			+ jsonMakeColor(polygon.fillColor) + ','
 			+ jsonMakePaths(polygon.getPaths());
 
@@ -353,11 +364,9 @@ function ShapesMap(_mapContainer, _deleteButton, _clearButton) {
 		buf += ']}';
 
 		return buf;
-		print(buf);
 	}
 
 	// storage of the shapes
-
 	function shapesAdd(shape) {
 		_shapes.push(shape);
 	}
@@ -389,14 +398,28 @@ function ShapesMap(_mapContainer, _deleteButton, _clearButton) {
 
 	function shapesSave() {
 		var shapes = jsonMake();
+		console.log(shapes)
 
-		// defining the expiration date of the cookie
-		var expirationDate = new Date();
-		expirationDate.setDate(expirationDate.getDate + 365);
+		$(document).ready(function(){
+			$('.saver').on('click', function() {
+				// var button = $(this).val();
+				$.ajax({
+					url: "/plots/new",
+					type: "POST",
+					contentType: 'application/json; charset=utf-8',
+					data: JSON.stringify('shapes'),
+					dataType: 'json'
+				})
+			})
+		})
 
-		// this encodes the JSON created as a URI and lets the user know when the cookie expires
+		// // defining the expiration date of the cookie
+		// var expirationDate = new Date();
+		// expirationDate.setDate(expirationDate.getDate + 365);
+		//
+		// // this encodes the JSON created as a URI and lets the user know when the cookie expires
 		var value = encodeURIComponent(shapes)
-		+ "; expires=" + expirationDate.toUTCString();
+		// + "; expires=" + expirationDate.toUTCString();
 		document.cookie = "shapes=" + value;
 	}
 
@@ -471,6 +494,11 @@ function ShapesMap(_mapContainer, _deleteButton, _clearButton) {
 		selectionSet(null);
 	}
 
+	// function ajaxIt(shape) {
+	// }
+
+
+
 	function selectionDelete() {
 		if (_selection != null) {
 			_selection.setMap(null);
@@ -507,7 +535,9 @@ function ShapesMap(_mapContainer, _deleteButton, _clearButton) {
 				google.maps.event.addListener(
 					shape,
 					'bounds_changed',
-					function() {onShapeEdited(shape);});
+					function() {
+						onShapeEdited(shape);
+						});
 				break;
 
 			case CIRCLE:
@@ -545,32 +575,6 @@ function ShapesMap(_mapContainer, _deleteButton, _clearButton) {
 		_newShapeNextId++;
 	}
 
-
-	// function getNewText(){
-	// 		var _newText = $('#newText');
-	// 		return _newText;
-	// }
-
-	// function createInfoWindow(shape) {
-	// 	// google.maps.event.addListener(shape, 'click', function(event) {
-	//   //   if(shape.infoWindow === true) {
-	// 	// 	    infoClose();
-	//   //   } else {
-	// 	    createEditableInfo(shape)
-	// 			// , {
-	// 			// 	html: "Edit here!",
-	// 			// 	point: _point
-	// 			// });
-	//         // infoWindow = new google.maps.InfoWindow({position: _point});
-	// 				// infoWindow.open()
-	//     // bb}
-	//
-	//     // Update InfoWindow content
-	//
-	// 		// infoWindow.open(_map, shape)
-	// // });
-	// }
-	//
 	function createInfoWindow(shape) {
 		infowindow = new google.maps.InfoWindow;
 
@@ -586,73 +590,7 @@ function ShapesMap(_mapContainer, _deleteButton, _clearButton) {
 					position: event.latLng
 				});
 				infowindow.open(_map, shape)
-				});
-
-		//(3)Set a flag property which stands for the editing mode.
-    shape.set("editing", false);
-
-    //(4)Create a div element to display the HTML strings.
-    var htmlBox = document.createElement("div");
-    htmlBox.innerHTML = options.html || "";
-    htmlBox.style.width = "300px";
-    htmlBox.style.height = "100px";
-
-    //(5)Create a textarea for edit the HTML strings.
-    var textBox = document.createElement("textarea");
-    textBox.innerText = options.html || "";
-    textBox.style.width = "300px";
-    textBox.style.height = "100px";
-    textBox.style.display = "none";
-
-    //(6)Create a div element for container.
-    var container = document.createElement("div");
-    container.style.position = "relative";
-    container.appendChild(htmlBox);
-    container.appendChild(textBox);
-
-    //(7)Create a button to switch the edit mode
-    var editBtn = document.createElement("button");
-    editBtn.innerText = "Edit";
-    container.appendChild(editBtn);
-
-    // google.maps.event.addListener(shape, "click", function(event) {
-		// 	if (event) {
-		//       _point = event.latLng;
-		// 			inf = infoWindow;
-		// 			// var options = {
-		// 	    //   content : "hello world",
-		// 			// 	position : _point
-		// 	    // };
-		// 			inf.InfoWindowOptions ({
-		// 				content : "hello world",
-		// 				position : _point
-		// 			});
-		// 			shape.infoWindow.open(_map, shape);
-		// 		}
-    // });
-    // (8)Create an info window
-		// console.log(_point);
-
-    // (9)The info window appear when the marker is clicked.
-
-    // (10)Switch the mode. Since Boolean type for editing property,
-    // the value can be change just negation.
-    google.maps.event.addDomListener(editBtn, "click", function() {
-      shape.set("editing", !shape.editing);
-    });
-
-    //(11)A (property)_changed event occurs when the property is changed.
-    google.maps.event.addListener(shape, "editing_changed", function(){
-      textBox.style.display = this.editing ? "block" : "none";
-      htmlBox.style.display = this.editing ? "none" : "block";
-    });
-
-    //(12)A change DOM event occur when the textarea is changed, then set the value into htmlBox.
-    google.maps.event.addDomListener(textBox, "change", function(){
-      htmlBox.innerHTML = textBox.value;
-      shape.set("html", textBox.value);
-    });
-    return shape;
+			});
   }
 
 	function infoClose(shape) {

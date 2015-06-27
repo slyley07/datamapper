@@ -4,51 +4,53 @@
 	  <title>
 	  	Datamapper
 	  </title>
-	  
+
+		<link href='http://fonts.googleapis.com/css?family=Arimo' rel='stylesheet' type='text/css'>
+		
 	  <%= stylesheet_link_tag    'application', media: 'all' %>
-	  
+
 		<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?libraries=drawing">
 		</script>
-	  
+
 	  <%= javascript_include_tag 'application' %>
-	  
+
 
 	  <%= csrf_meta_tags %>
 
-    <style>
-      html, body, #map-canvas {
-        height: 200px;
-        width: 200px
-        margin: 0px;
-        padding: 0px
-      }
-    </style>
 	</head>
-	
+
 	<body>
+
+
 		<%= flash[:notice] if flash[:notice] %>
-				
+
 		<%= flash[:alert] if flash[:alert] %>
 
-		<ul>
-			<li>
-				<%= link_to 'Map!', data_path %>
-			</li>
+		<nav>
+			<h1>
+				Datamapper
+			</h1>
 
-			<% if current_user %>
+			<ul>
 				<li>
-					<%= link_to 'Logout', logout_path, method: :delete %>
+					<%= link_to 'Map!', plots_path %>
 				</li>
-			<% else %>
-				<li>
-					<%= link_to 'Home', root_path %>
-				</li>
-			<% end %>
-		</ul>
-		
+
+				<% if current_user %>
+					<li>
+						<%= link_to 'Logout', logout_path, method: :delete %>
+					</li>
+				<% else %>
+					<li>
+						<%= link_to 'Home', root_path %>
+					</li>
+				<% end %>
+			</ul>
+		</nav>
+
 		<%= yield %>
-		
+
 		<%= yield :javascript %>
 
-	</body>  
+	</body>
 </html>

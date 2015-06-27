@@ -12,26 +12,70 @@
  *
  */
 
- @import 'bourbon/bourbon';
- @import 'neat/neat';
+@import 'bourbon/bourbon';
+@import 'neat/neat';
 
- body{
- 	// outer-container(100%);
-   .thing {
-     display: none;
-   }
+body {
+  @include outer-container(100%);
+  font-family: 'Arimo', sans-serif;
 
-	 #map-canvas {
-	 	width: 90%;
-	 	height: 700px;
-	 	margin: 0 auto;
-	 	// @include span-columns(8 of 12);
-	 }
+  nav{
+    @include span-columns(8);
+    @include shift(4);
 
-	       #delete-button {
-        position: fixed;
-        top: 5px;
-        right: 5px;
+    h1 {
+      @include span-columns(4);
+      margin: 0;
+      font-size: 30px;
+    }
+
+    ul {
+      @include span-columns(4);
+      padding: 0;
+      margin: 0;
+      list-style-type: none;
+
+      li {
+        display: inline-block;
+        margin: 0 10px;
+
+        a {
+          text-decoration: none;
+          color: green;
+        }
+      }
+    }
+  }
+  .forms {
+    @include span-columns(8);
+    @include shift(4);
+
+    .signin {
+      @include span-columns(3);
+      display: inline-block;
+
+      input {
+        margin: 2px;
+        border-radius: 5px;
+      }
+    }
+
+    .signup {
+      @include span-columns(3);
+      display: inline-block;
+
+      h1{
+        @include span-columns(6);
       }
 
- }
+      input {
+        margin: 2px;
+        border-radius: 5px;
+
+        input[type=submit] {
+          color: red;
+        }
+      }
+    }
+  }
+}
