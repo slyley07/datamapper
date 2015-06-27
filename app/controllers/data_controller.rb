@@ -7,6 +7,7 @@ class DataController < ApplicationController
   def index
 		@user = current_user
 		@post = Post.new
+		@shape = Datam.new(title: cookies[:shapes["type"]])
     # @shape = Datam.new(shape: cookies[:shapes])
     # @current_shapes = cookies[:shapes]
     # unless current_location.nil?
