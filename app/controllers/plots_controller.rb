@@ -12,8 +12,12 @@ class PlotsController < ApplicationController
   end
 
   def create
-    @plot = Plot.new(json: cookies[:shape])
-    @plot.save
+    @plot = Plot.new(json: cookies[:shapes])
+    if @plot.save
+      redirect_to plots_path
+    else
+      render :index
+    end
 		# @post = Post.new(params.require(:post).permit(:date, :website, :title, :address, :description).merge(user: current_user))
   end
 

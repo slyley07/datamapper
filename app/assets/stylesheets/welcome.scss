@@ -54,18 +54,16 @@ body {
 
       input {
         margin: 7px;
-        // border-radius: 5px;
         border: none;
         border-bottom: 2px solid black;
         font-size: 20px;
-
       }
 
       input:focus,
       select:focus,
       textarea:focus,
       button:focus {
-          outline: none;
+        outline: none;
       }
 
       input[type=submit] {
@@ -88,7 +86,6 @@ body {
 
       input {
         margin: 7px;
-        // border-radius: 5px;
         border: none;
         border-bottom: 2px solid black;
         font-size: 20px;
@@ -98,7 +95,7 @@ body {
       select:focus,
       textarea:focus,
       button:focus {
-          outline: none;
+        outline: none;
       }
       input[type=submit] {
         color: #000000;

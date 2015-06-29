@@ -15,6 +15,19 @@ body{
     }
   }
 
+  .json {
+    display: none;
+  }
+
+  #delete-button, #clear-button {
+    display: none;
+  }
+
+  .saver {
+    @include span-columns(1 of 12);
+    display: none;
+  }
+
   input[type=submit] {
     color: #000000;
     border: 2px solid black;

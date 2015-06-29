@@ -1,16 +1,11 @@
-<%= form_tag('/plots') do %>
-  <%= submit_tag 'Save', class: :saver, remote: :true %>
+<%= form_for('/plots') do |f| %>
+  <%= f.text_field :json, class: :json %>
+  <%= f.submit 'Save', class: :saver, remote: :true %>
 <% end %>
-
-<div class="lookhere">
-  <p> what </p>
-</div>
-
-
 
 <div class="thing">
   <div class="thang">
-    <%= @user.fname %>
+    <%= @plot.user %>
     <br>
     <%= best_in_place @post, :title, place_holder: "Click me to tell me the title of the paper!" %>
     <br>
@@ -27,10 +22,6 @@
 <div class="map">
   <div id='map-canvas'></div>
 </div>
-
-
-
-
 
 <script type="text/javascript">
   function initialize() {

@@ -400,26 +400,25 @@ function ShapesMap(_mapContainer, _deleteButton, _clearButton) {
 		var shapes = jsonMake();
 		console.log(shapes)
 
-		$(document).ready(function(){
-			$('.saver').on('click', function() {
-				// var button = $(this).val();
-				$.ajax({
-					url: "/plots/new",
-					type: "POST",
-					contentType: 'application/json; charset=utf-8',
-					data: JSON.stringify('shapes'),
-					dataType: 'json'
-				})
-			})
-		})
+		// $(document).ready(function(){
+		// 	$('.saver').on('click', function() {
+		// 		// var button = $(this).val();
+		// 		$.ajax({
+		// 			url: "/plots/new",
+		// 			type: "POST",
+		// 			data: JSON.stringify('shapes'),
+		// 			dataType: 'json'
+		// 		})
+		// 	})
+		// })
 
 		// // defining the expiration date of the cookie
-		// var expirationDate = new Date();
-		// expirationDate.setDate(expirationDate.getDate + 365);
+		var expirationDate = new Date();
+		expirationDate.setDate(expirationDate.getDate + 365);
 		//
 		// // this encodes the JSON created as a URI and lets the user know when the cookie expires
 		var value = encodeURIComponent(shapes)
-		// + "; expires=" + expirationDate.toUTCString();
+		+ "; expires=" + expirationDate.toUTCString();
 		document.cookie = "shapes=" + value;
 	}
 
