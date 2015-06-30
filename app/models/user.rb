@@ -1,5 +1,5 @@
 class User < ActiveRecord::Base
-	has_many :data
+	has_many :plots
 	has_many :posts
 
 	validates :password, confirmation: true

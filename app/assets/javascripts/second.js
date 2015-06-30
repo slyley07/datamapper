@@ -412,16 +412,16 @@ function ShapesMap(_mapContainer, _deleteButton, _clearButton) {
 		// 	})
 		// })
 
-		// // defining the expiration date of the cookie
+		// defining the expiration date of the cookie
 		var expirationDate = new Date();
 		expirationDate.setDate(expirationDate.getDate + 365);
-		//
-		// // this encodes the JSON created as a URI and lets the user know when the cookie expires
+		// this encodes the JSON created as a URI and lets the user know when the cookie expires
 		var value = encodeURIComponent(shapes)
 		+ "; expires=" + expirationDate.toUTCString();
 		document.cookie = "shapes=" + value;
 	}
 
+	// function for loading the shapes
 	function shapesLoad() {
 		var start_length = _shapes.length;
 
@@ -492,11 +492,6 @@ function ShapesMap(_mapContainer, _deleteButton, _clearButton) {
 		infoClose(_selection);
 		selectionSet(null);
 	}
-
-	// function ajaxIt(shape) {
-	// }
-
-
 
 	function selectionDelete() {
 		if (_selection != null) {

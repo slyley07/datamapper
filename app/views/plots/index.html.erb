@@ -5,13 +5,7 @@
 
 <div class="thing">
   <div class="thang">
-    <%= @plot.user %>
-    <br>
-    <%= best_in_place @post, :title, place_holder: "Click me to tell me the title of the paper!" %>
-    <br>
-    <%= best_in_place @post, :website, place_holder: "Click here to tell me the website!" %>
-    <br>
-    <%= submit_tag "Submit!" %>
+    <%= render 'posts/post' %>
   </div>
 </div>
 

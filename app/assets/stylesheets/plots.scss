@@ -8,9 +8,10 @@ body{
   .map {
     @include span-columns(10 of 12);
     @include shift(1 of 12);
+    margin-top: 20px;
 
     #map-canvas{
-      height: 700px;
+      height: 800px;
       margin: 0 auto;
     }
   }
@@ -19,7 +20,7 @@ body{
     display: none;
   }
 
-  #delete-button, #clear-button {
+  #clear-button {
     display: none;
   }
 
