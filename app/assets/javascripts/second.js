@@ -398,27 +398,26 @@ function ShapesMap(_mapContainer, _deleteButton, _clearButton) {
 
 	function shapesSave() {
 		var shapes = jsonMake();
-		console.log(shapes)
+		// console.log(shapes)
 
-		// $(document).ready(function(){
-		// 	$('.saver').on('click', function() {
-		// 		// var button = $(this).val();
-		// 		$.ajax({
-		// 			url: "/plots/new",
-		// 			type: "POST",
-		// 			data: JSON.stringify('shapes'),
-		// 			dataType: 'json'
-		// 		})
-		// 	})
-		// })
+		var ready = function(){
+				$.ajax({
+					type: "POST",
+					url: "/plots",
+					data: JSON.stringify(shapes),
+					dataType: 'json'
+				})
+		}
+		$(document).ready(ready);
+		$(document).on('page:load', ready)
 
-		// defining the expiration date of the cookie
-		var expirationDate = new Date();
-		expirationDate.setDate(expirationDate.getDate + 365);
-		// this encodes the JSON created as a URI and lets the user know when the cookie expires
-		var value = encodeURIComponent(shapes)
-		+ "; expires=" + expirationDate.toUTCString();
-		document.cookie = "shapes=" + value;
+		// // defining the expiration date of the cookie
+		// var expirationDate = new Date();
+		// expirationDate.setDate(expirationDate.getDate + 365);
+		// // this encodes the JSON created as a URI and lets the user know when the cookie expires
+		// var value = encodeURIComponent(shapes)
+		// + "; expires=" + expirationDate.toUTCString();
+		// document.cookie = "shapes=" + value;
 	}
 
 	// function for loading the shapes

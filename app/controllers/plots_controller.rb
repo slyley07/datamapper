@@ -1,6 +1,8 @@
+require 'json'
+
 class PlotsController < ApplicationController
   def new
-    @plot = Plot.new
+    # redirect_to
   end
 
   def index
@@ -10,12 +12,17 @@ class PlotsController < ApplicationController
   end
 
   def create
-    # @plot = Plot.new(json: params[:id])
+    @parsed = JSON.parse(params)
+
+    puts @parsed.class
+    # @parsed = JSON.parse(params)
+    # puts @parsed["shapes"]
 		# @plot = Plot.new(params.require(:plot).permit(shapes: :id).merge(user: current_user))
     # if @plot.save
     #   redirect_to plots_path
     # else
-    #   render :index
+      # puts "TEST"
+      render :index
     # end
   end
 
