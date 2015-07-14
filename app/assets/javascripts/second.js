@@ -56,7 +56,6 @@ function ShapesMap(_mapContainer, _deleteButton, _clearButton) {
 		// looping through array of path points for a polyline or polygon
 		for (var i = 0; i < jsonPath.length; i++) {
 
-			// console.log("lat", jsonPath[i]["lat"]);
 			// creating a variable to hold the latitude and longitude of each point in a polyline or polygon path array
 			var latlon = new google.maps.LatLng(parseFloat(jsonPath[i]["lat"]), parseFloat(jsonPath[i]["lon"]));
 
@@ -64,7 +63,6 @@ function ShapesMap(_mapContainer, _deleteButton, _clearButton) {
 			// pushing each instance of the variable into the path array
 			path.push(latlon);
 		}
-		// console.log(path);
 		return path;
 	}
 
@@ -101,9 +99,6 @@ function ShapesMap(_mapContainer, _deleteButton, _clearButton) {
 
 		// variable for defining the center coordinate of the circle
 		var center = new google.maps.LatLng(parseFloat(jc["cords"]["center"]["lat"]), parseFloat(jc["cords"]["center"]["lon"]));
-		// console.log(center);
-		// console.log(jc"]["radius"]);
-
 
 		// variable for defining the circle options
 		var circleOptions = {
@@ -114,7 +109,6 @@ function ShapesMap(_mapContainer, _deleteButton, _clearButton) {
 			fillColor: jc.color,
 			map: _map
 		};
-		// console.log(circleOptions);
 
 		var circle = new google.maps.Circle(circleOptions);
 		return circle;
@@ -146,17 +140,10 @@ function ShapesMap(_mapContainer, _deleteButton, _clearButton) {
 		// loop for pushing all of the points of the polygon into an MVCarray
 		for (var i = 0; i < jsonPolygon.length; i++) {
 			// variable defining the points of each path on a polygon
-			// console.log(jsonPolygon[0]["paths"][0]["path"]);
 			var path = jsonReadPath(jsonPolygon);
-			// for (var i = 0; i < jsonPolygon[i].length)
-			console.log(jsonPolygon.length);
-			// console.log(jsonPolygon[0]["path"][i])
-			// console.log(jsonPolygon[0]["paths"][0]["path"][i].lat);
-			// console.log(jsonPolygon["paths"][0]["path"]);
 			// pushing the individual path into the MVCArray
 			paths.push(path);
 		}
-		// console.log(paths);
 		// variable for defining the polygon options
 		var polygonOptions = {
 			paths: paths,
@@ -164,21 +151,14 @@ function ShapesMap(_mapContainer, _deleteButton, _clearButton) {
 			fillColor: jsonPolygon.color,
 			map: _map
 		};
-		// console.log(paths);
 
 		var polygon = new google.maps.Polygon(polygonOptions);
 		return polygon;
 	}
 
-
 	function jsonRead(json) {
-		// take this out. eval is a security risk
-		// var jsonObject = JSON.parse(json);
-		// console.log(jsonObject);
-		// console.log(json[0])
 		if (json[0]["type"] === "circle") {
 			var circle = jsonReadCircle(json[0]);
-			// console.log(json[0]);
 			newShapeSetProperties(circle, CIRCLE);
 			newShapeAddListeners(circle);
 			shapesAdd(circle);
@@ -194,43 +174,10 @@ function ShapesMap(_mapContainer, _deleteButton, _clearButton) {
 			shapesAdd(polyline);
 		} else if (json[0]["type"] === "polygon") {
 			var polygon = jsonReadPolygon(json[0]["paths"][0]["path"]);
-			// console.log(json[0]["paths"][0]["path"].length)
 			newShapeSetProperties(polygon, POLYGON);
 			newShapeAddListeners(polygon);
 			shapesAdd(polygon);
 		}
-		//
-		// for (i = 0; i < jsonObject.shapes.length; i++) {
-		// 	switch (json.shapes[i].type) {
-		// 		case RECTANGLE:
-		// 			var rectangle = jsonReadRectangle(json.shape[i]);
-		// 			newShapeSetProperties(rectangle, RECTANGLE);
-		// 			newShapeAddListeners(rectangle);
-		// 			shapesAdd(rectangle);
-		// 			break;
-		//
-		// 		case CIRCLE:
-		// 			var circle = jsonReadCircle(json.shapes[i]);
-		// 			newShapeSetProperties(circle, CIRCLE);
-		// 			newShapeAddListeners(circle);
-		// 			shapesAdd(circle);
-		// 			break;
-		//
-		// 		case POLYLINE:
-		// 			var polyline = jsonReadPolyline(json.shapes[i]);
-		// 			newShapeSetProperties(polyline, POLYLINE);
-		// 			newShapeAddListeners(polyline);
-		// 			shapesAdd(polyline);
-		// 			break;
-		//
-		// 		case POLYGON:
-		// 			var polygon = jsonReadPolygon(json.shapes[i]);
-		// 			newShapeSetProperties(polygon, POLYGON);
-		// 			newShapeAddListeners(polygon);
-		// 			shapesAdd(polygon);
-		// 			break;
-		// 	}
-		// }
 	}
 
 	// writing the JSON
@@ -264,11 +211,6 @@ function ShapesMap(_mapContainer, _deleteButton, _clearButton) {
 
 		return buf;
 	}
-
-	// function jsonMakeId(shape) {
-	// 	var buf =  '"id":"' + shape.appId + '"';
-	// 	return buf;
-	// }
 
 	// returns the fill color of the object as JSON
 	function jsonMakeColor(color) {
@@ -327,7 +269,6 @@ function ShapesMap(_mapContainer, _deleteButton, _clearButton) {
 		var buf =
 			'"' + rectangle.appId + '":{'
 			+	jsonMakeType(RECTANGLE) + ','
-			// + jsonMakeId(rectangle) + ','
 			+ jsonMakeColor(rectangle.fillColor) + ','
 			+ jsonMakeBounds(rectangle.bounds) + '}';
 
@@ -339,10 +280,9 @@ function ShapesMap(_mapContainer, _deleteButton, _clearButton) {
 		var buf =
 			'"' + circle.appId + '":{'
 			+ jsonMakeType(CIRCLE) + ','
-			// + jsonMakeId(circle) + ','
 			+ jsonMakeColor(circle.fillColor) + ','
 			+ '"cords":{' + jsonMakeCenter(circle.center) + ','
-			 + jsonMakeRadius(circle.radius) + '}}';
+			+ jsonMakeRadius(circle.radius) + '}}';
 
 		return buf
 	}
@@ -352,7 +292,6 @@ function ShapesMap(_mapContainer, _deleteButton, _clearButton) {
 		var buf =
 			'"' + polyline.appId + '":{'
 			+ jsonMakeType(POLYLINE) + ','
-			// + jsonMakeId(polyline) + ','
 			+ jsonMakeColor(polyline.fillColor) + ','
 			+ jsonMakePath(polyline.getPath()) + '}';
 
@@ -365,7 +304,6 @@ function ShapesMap(_mapContainer, _deleteButton, _clearButton) {
 		var buf =
 			'"' + polygon.appId + '":{'
 			+ jsonMakeType(POLYGON) + ','
-			// + jsonMakeId(polygon) + ','
 			+ jsonMakeColor(polygon.fillColor) + ','
 			+ jsonMakePaths(polygon.getPaths()) + '}';
 
@@ -418,6 +356,17 @@ function ShapesMap(_mapContainer, _deleteButton, _clearButton) {
 
 	function shapesDelete(shape) {
 		var found = false;
+		console.log(shape);
+		$.ajax({
+			 type: "DELETE",
+			 url: "/plots",
+			 dataType: "json",
+			 data: shape,
+			 complete: function(){
+				 	console.log("yay");
+					shapesSave();
+			 }
+	 });
 
 		for (var i = 0; i < _shapes.length && !found; i++) {
 			if (_shapes[i] === shape) {
@@ -469,7 +418,6 @@ function ShapesMap(_mapContainer, _deleteButton, _clearButton) {
 				success: function(plots) {
 					for (i = 0; i < plots.json.length; i++) {
 						jsonRead(plots.json[i].json);
-						// console.log(plots.json[i].json[0]);
 					}
 				}
 			})
@@ -477,22 +425,6 @@ function ShapesMap(_mapContainer, _deleteButton, _clearButton) {
 
 		$(document).ready(ready());
 		$(document).on('page:load', ready);
-		// console.log(;
-		// jsonRead(ready);
-		// console.log(ready);
-		// var cookies = document.cookie.split(";");
-		// for (var i = 0; i < cookies.length; i++) {
-		// 	var key = cookies[i].substr(0, cookies[i].indexOf("="));
-		// 	// key = key.replace("/^\s+|\s+$/g", "");
-		// 	key = key.trim();
-		// 	if (key == "shapes") {
-		// 		var value = cookies[i].substr(cookies[i].indexOf("=") + 1);
-		//
-		// 	// }
-		// // // }
-		//
-		// var n_loaded = _shapes.length - start_length;
-		// print(n_loaded + " shapes loaded\n");
 	}
 
 	// printing all information to the console!

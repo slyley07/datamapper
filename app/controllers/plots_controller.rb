@@ -49,6 +49,12 @@ class PlotsController < ApplicationController
   end
 
   def destroy
+    @plot = Plot.find(:id)
+    if @plot.destroy
+      p "Success"
+    else
+      p "Sorry bud"
+    end    
   end
 
   private
