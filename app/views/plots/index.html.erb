@@ -1,14 +1,8 @@
-<%= form_for('/plots') do |f| %>
-  <%= f.text_field :json, class: :json %>
-  <%= f.submit 'Save', class: :saver, remote: :true %>
-<% end %>
-
 <div class="thing">
   <div class="thang">
     <%= render 'posts/post' %>
   </div>
 </div>
-<input type="button" id="saver" value="Save!">
 
 <input type="button" id="delete-button" value="Delete Shape">
 
@@ -29,7 +23,7 @@
       document.getElementById("delete-button"),
       document.getElementById("clear-button"));
 	}
-  
+
 
 	google.maps.event.addDomListener(window, 'load', initialize);
 </script>

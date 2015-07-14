@@ -35,14 +35,10 @@ body{
     display: none;
   }
 
-  #clear-button {
+  #clear-button, #delete-button {
     display: none;
   }
 
-  .saver {
-    @include span-columns(1 of 12);
-    display: none;
-  }
 
   input[type=submit] {
     color: #000000;

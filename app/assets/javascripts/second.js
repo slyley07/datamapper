@@ -1,3 +1,4 @@
+// the function that creates the map and is called in the html file
 function ShapesMap(_mapContainer, _deleteButton, _clearButton) {
 	// default state of the variables
 	var _selection = null;
@@ -47,9 +48,9 @@ function ShapesMap(_mapContainer, _deleteButton, _clearButton) {
 	}
 
 	// reading the JSON
-	// function for defining the paths of a polyline or polygon object
+	// function for defining the path of a polyline or path of separate paths of a polygon object
 	function jsonReadPath(jsonPath) {
-		// variable creating a new MVCArray (an object that Google Maps API provides natively)
+		// variable creating an empty MVCArray (an object that Google Maps API provides natively)
 		// this variable is where each path is placed in the map
 		var path = new google.maps.MVCArray();
 
@@ -60,9 +61,11 @@ function ShapesMap(_mapContainer, _deleteButton, _clearButton) {
 			var latlon = new google.maps.LatLng(parseFloat(jsonPath[i]["lat"]), parseFloat(jsonPath[i]["lon"]));
 
 
-			// pushing each instance of the variable into the path array
+			// pushing each instance of the variable into the path (Google MVCArray) array
 			path.push(latlon);
 		}
+
+		//returns the array of paths when the function is called
 		return path;
 	}
 
@@ -88,7 +91,10 @@ function ShapesMap(_mapContainer, _deleteButton, _clearButton) {
 			map: _map
 		};
 
+		// creates a new google maps rectangle object on the map for the SouthWest and NorthEast points defined
 		var rectangle = new google.maps.Rectangle(rectangleOptions);
+
+		// returns the rectangle object when the function is called
 		return rectangle;
 	}
 
@@ -110,13 +116,17 @@ function ShapesMap(_mapContainer, _deleteButton, _clearButton) {
 			map: _map
 		};
 
+		//  creates a new circle object on the map in a variable
 		var circle = new google.maps.Circle(circleOptions);
+
+		// returns the circle object when the function is called
 		return circle;
 	}
 
 	// function for defining the path of a polyline object
 	function jsonReadPolyline(jsonPolyline) {
 		// variable defining the points on the path that the polyline has
+		// calls the path reading function to loop through all of the points in the polyline path array
 		var path = jsonReadPath(jsonPolyline);
 
 		// variable defining the polyline options
@@ -127,19 +137,23 @@ function ShapesMap(_mapContainer, _deleteButton, _clearButton) {
 			map: _map,
 		};
 
+		// creates a new Google Maps polyline object on the map in a variable
 		var polyline = new google.maps.Polyline(polylineOptions);
 
+		// returns the polyline object when the fucntion is called
 		return polyline;
 	}
 
 	// function for defining the paths of a polygon object
 	function jsonReadPolygon(jsonPolygon) {
 		// variable creating an empty Google MVCArray (an object provided by Google API)
+		// allows for all of the paths that are contained in a polygon, into an array called paths
 		var paths = new google.maps.MVCArray();
 
 		// loop for pushing all of the points of the polygon into an MVCarray
 		for (var i = 0; i < jsonPolygon.length; i++) {
 			// variable defining the points of each path on a polygon
+			//calls the path reading function on each individual array of paths contained in the polygon
 			var path = jsonReadPath(jsonPolygon);
 			// pushing the individual path into the MVCArray
 			paths.push(path);
@@ -152,27 +166,40 @@ function ShapesMap(_mapContainer, _deleteButton, _clearButton) {
 			map: _map
 		};
 
+		// creates a new Google Maps polygon object in a variable
 		var polygon = new google.maps.Polygon(polygonOptions);
+
+		// returns the polygon object when the function is called
 		return polygon;
 	}
 
+	// function for reading all of the JSON that is parsed through the controller (and then retrieved with an AJAX request)
 	function jsonRead(json) {
+
+		// method for figuring out which shape type the AJAX request returns
 		if (json[0]["type"] === "circle") {
+			// places the json (an attribute on the Ruby plot object) in the circle variable
 			var circle = jsonReadCircle(json[0]);
+			// sets the shape's properties and defines its type
 			newShapeSetProperties(circle, CIRCLE);
+			// add specific event listeners for the shape
 			newShapeAddListeners(circle);
+			// adds the shape to the map
 			shapesAdd(circle);
 		} else if (json[0].type === "rectangle") {
+			// the json for the rectangle is not contained within an array, as it is with the other shapes, so it doesn't need an indexed number after the json variable
 			var rectangle = jsonReadRectangle(json);
 			newShapeSetProperties(rectangle, RECTANGLE);
 			newShapeAddListeners(rectangle);
 			shapesAdd(rectangle);
 		} else if (json[0].type === "polyline") {
+			// the json for the polyline is contained within the path hash, which is itself in an array
 			var polyline = jsonReadPolyline(json[0]["path"]);
 			newShapeSetProperties(polyline, POLYLINE);
 			newShapeAddListeners(polyline);
 			shapesAdd(polyline);
 		} else if (json[0]["type"] === "polygon") {
+			// the json for the polygon is contained within the path hash, which is in an array, which is in the paths hash, which is in an array
 			var polygon = jsonReadPolygon(json[0]["paths"][0]["path"]);
 			newShapeSetProperties(polygon, POLYGON);
 			newShapeAddListeners(polygon);
@@ -196,6 +223,7 @@ function ShapesMap(_mapContainer, _deleteButton, _clearButton) {
 
 	// returns the bounds (defined by the NorthEast and SouthWest corners) of a rectangle as JSON
 	function jsonMakeBounds(bounds) {
+		// pushes the bounds of the rectangle as the value of a key called bounds
 		var buf =
 			'"bounds":{'
 			+ '"northEast":{' + jsonMakeLatlon(bounds.getNorthEast()) + '},'
@@ -225,7 +253,7 @@ function ShapesMap(_mapContainer, _deleteButton, _clearButton) {
 		return buf;
 	}
 
-	// returns the radius of the circle as JSON
+	// returns the radius of the circle as JSON and places it as the value for the "radius" key
 	function jsonMakeRadius(radius) {
 		var buf = '"radius":"' + radius + '"';
 
@@ -236,6 +264,7 @@ function ShapesMap(_mapContainer, _deleteButton, _clearButton) {
 	function jsonMakePath(path) {
 		var n = path.getLength();
 
+		// creates the key "path" and assigns the array of paths as the value
 		var buf = '"path":[';
 		for (var i = 0; i < n; i++) {
 			var latlon = path.getAt(i);
@@ -251,7 +280,7 @@ function ShapesMap(_mapContainer, _deleteButton, _clearButton) {
 	// returns the path points of all of the paths of a polygon as JSON
 	function jsonMakePaths(paths) {
 		var n = paths.getLength();
-
+		// creates the key "paths" and assignes the path hashes as an array as the value
 		var buf = '"paths":[';
 		for (var i = 0; i < n; i++) {
 			var path = paths.getAt(i);
@@ -264,7 +293,7 @@ function ShapesMap(_mapContainer, _deleteButton, _clearButton) {
 		return buf;
 	}
 
-	// concatenates the type, fill color of the object, and the bounds of a rectangle
+	// concatenates the type, fill color of the object, and the bounds of a rectangle and places these as the value of the shape's id (which is the key)
 	function jsonMakeRectangle(rectangle) {
 		var buf =
 			'"' + rectangle.appId + '":{'
@@ -275,7 +304,7 @@ function ShapesMap(_mapContainer, _deleteButton, _clearButton) {
 		return buf;
 	}
 
-	// concatenates the type, fill color of the object, center coordinates, and radius of a circle
+	// concatenates the type, fill color of the object, center coordinates, and radius of a circle and places it as the value of the shape's id (which is the key)
 	function jsonMakeCircle(circle) {
 		var buf =
 			'"' + circle.appId + '":{'
@@ -287,7 +316,7 @@ function ShapesMap(_mapContainer, _deleteButton, _clearButton) {
 		return buf
 	}
 
-	// concatenates the type, color of the polyline, and the path points of a polyline
+	// concatenates the type, color of the polyline, and the path points of a polyline and places it as the value of the shape's id (which is the key)
 	function jsonMakePolyline(polyline) {
 		var buf =
 			'"' + polyline.appId + '":{'
@@ -299,7 +328,7 @@ function ShapesMap(_mapContainer, _deleteButton, _clearButton) {
 	}
 
 
-	// concatenates the type, fill color of the polygon, and the paths of a polygon
+	// concatenates the type, fill color of the polygon, and the paths of a polygon and places it as the value of the shape's id (which is the key)
 	function jsonMakePolygon(polygon) {
 		var buf =
 			'"' + polygon.appId + '":{'
@@ -311,6 +340,7 @@ function ShapesMap(_mapContainer, _deleteButton, _clearButton) {
 	}
 
 	// concatenates all of the overlay shapes on a map together into the JSON format
+	//places all of the shapes as the value with 'shapes' as the key
 	function jsonMake() {
 		// variable for starting out the JSON
 		var buf = '{"shapes":[';
@@ -349,11 +379,13 @@ function ShapesMap(_mapContainer, _deleteButton, _clearButton) {
 		return buf;
 	}
 
-	// storage of the shapes
+	// storage of the shapes into an array
 	function shapesAdd(shape) {
 		_shapes.push(shape);
 	}
 
+
+	// deletes the shape from the map
 	function shapesDelete(shape) {
 		var found = false;
 		console.log(shape);
@@ -368,6 +400,7 @@ function ShapesMap(_mapContainer, _deleteButton, _clearButton) {
 			 }
 	 });
 
+	 // old method for deleting the shapes
 		for (var i = 0; i < _shapes.length && !found; i++) {
 			if (_shapes[i] === shape) {
 				infoClose();
@@ -377,6 +410,8 @@ function ShapesMap(_mapContainer, _deleteButton, _clearButton) {
 		}
 	}
 
+	// hide all of the shapes on the map
+	// not currently in use
 	function shapesHideAll() {
 		for (var i = 0; i < _shapes.length; i++) {
 			// calling 'setMap(null)' on an object makes the object hidden on the map
@@ -384,50 +419,63 @@ function ShapesMap(_mapContainer, _deleteButton, _clearButton) {
 		}
 	}
 
+	// deletes all of the shapes from the map
+	// not currently in use
 	function shapesDeleteAll() {
 		print(_shapes.length + " shapes deleted\n");
 		infoClose();
 		_shapes.splice(0, _shapes.length);
 	}
 
+	// saves all of the shapes by sending an AJAX post request to the server with the json created in the above functions as the data
 	function shapesSave() {
 		var shapes = jsonMake();
 
+		// the function is pushed into a variable to ensure that it occurs on the loading of the page
 		var ready = function(){
 				$.ajax({
 					type: "POST",
 					url: "/plots",
 					dataType: 'json',
 					contentType: 'application/json',
+					//the data needs to be stringified to be sent to the server.
 					data: JSON.stringify(shapes)
 				});
 		}
+
+		// a double layer of insurance to makes certain that the shapes save when the document is ready and when the page loads
 		$(document).ready(ready);
 		$(document).on('page:load', ready);
 	}
 
 	// function for loading the shapes
 	function shapesLoad() {
-		var start_length = _shapes.length;
+		// var start_length = _shapes.length;
 
+		// the function is placed in a variable to ensure that the shapes load on the loading of the document and the loading of the page
 		var ready = function(){
 			$.ajax({
 				type: "GET",
 				url: "/plots",
 				dataType: "json",
 				success: function(plots) {
+					// looping through the returned json from the AJAX request
 					for (i = 0; i < plots.json.length; i++) {
+						// calling the jsonRead function on the returned json from the server
 						jsonRead(plots.json[i].json);
 					}
 				}
 			})
 		}
 
+		// double insurance so that the shapes load on the loading of the page and the loading of the document
 		$(document).ready(ready());
 		$(document).on('page:load', ready);
 	}
 
 	// printing all information to the console!
+	// currently being used, but not really necessary
+	// good for debugging
 	function print(string) {
 		console.log(string);
 	}
@@ -453,6 +501,7 @@ function ShapesMap(_mapContainer, _deleteButton, _clearButton) {
 		return _selection != null;
 	}
 
+	// function for selecting a specific shape when it's clicked on
 	function selectionSet(newSelection) {
 		infoClose(_selection);
 		if (newSelection == _selection) {
@@ -473,11 +522,14 @@ function ShapesMap(_mapContainer, _deleteButton, _clearButton) {
 		selectionPrint();
 	}
 
+	// clearing a selection if the map is clicked or if another shape is clicked
 	function selectionClear() {
 		infoClose(_selection);
 		selectionSet(null);
 	}
 
+	// deletes the selection
+	// not currently in use
 	function selectionDelete() {
 		if (_selection != null) {
 			_selection.setMap(null);
@@ -485,13 +537,15 @@ function ShapesMap(_mapContainer, _deleteButton, _clearButton) {
 		}
 	}
 
-	// adding new shapes to the map!
+	// adding listeners to new paths on the map for polylines and polygons!
 	function newShapeAddPathListeners(shape, path) {
+		// event listener for inserting a new shape
 		google.maps.event.addListener(
 			path,
 			'insert_at',
 			function() {onShapeEdited(shape)});
 
+		// event listener for deleting
 		google.maps.event.addListener(
 			path,
 			'remove_at',
@@ -503,6 +557,7 @@ function ShapesMap(_mapContainer, _deleteButton, _clearButton) {
 			function() {onShapeEdited(shape)});
 	}
 
+	// adding new listeners for new shapes on the map
 	function newShapeAddListeners(shape) {
 		google.maps.event.addListener(
 			shape,
@@ -554,6 +609,7 @@ function ShapesMap(_mapContainer, _deleteButton, _clearButton) {
 		_newShapeNextId++;
 	}
 
+	// creates the info window on click of the shape
 	function createInfoWindow(shape) {
 		infowindow = new google.maps.InfoWindow;
 
@@ -563,6 +619,7 @@ function ShapesMap(_mapContainer, _deleteButton, _clearButton) {
 			html: html
 		}
 
+		// the event listener for the info window
 		google.maps.event.addListener(shape, 'click', function(event) {
 				infowindow.setOptions({
 					content: options.html,
@@ -572,6 +629,7 @@ function ShapesMap(_mapContainer, _deleteButton, _clearButton) {
 			});
   }
 
+	// function for closing the info window
 	function infoClose(shape) {
     infoWindow.close();
 	}
@@ -594,10 +652,12 @@ function ShapesMap(_mapContainer, _deleteButton, _clearButton) {
 
 	//creating the drawing manager!
 	function drawingManagerCreate() {
-		// create drawing manager
 
+		// create drawing manager
+		// set an array of possible shapes in a variable
 		var drawingModes = new Array(RECTANGLE, CIRCLE, POLYGON, POLYLINE);
 
+		// set the drawing mode options in a variable so it only gets called when you want
 		var drawingControlOptions = {
 			drawingModes: drawingModes,
 			position: google.maps.ControlPosition.TOP_CENTER
@@ -635,13 +695,16 @@ function ShapesMap(_mapContainer, _deleteButton, _clearButton) {
 		printDrawingMode(drawingManager);
 		selectionPrint();
 
+		// returns the drawing manager when the function is called
 		return drawingManager;
 	}
 
 	// event capture
 	function onNewShape(event) {
+		// when a shape is overlayed, push that event into a variable
 		var shape = event.overlay;
 
+		// set all of the properities of the event according to the event shape and event type
 		newShapeSetProperties(shape, event.type);
 		newShapeAddListeners(shape);
 		shapesAdd(shape);
@@ -651,21 +714,25 @@ function ShapesMap(_mapContainer, _deleteButton, _clearButton) {
 		print("new " + typeDesc(event.type) + " created (id = " + shape.appId + ")\n");
 	}
 
+	// function for printing that the shape was edited and then saving the edited shape
 	function onShapeEdited(shape) {
 		print(shape.appId + ": shape edited\n");
 		shapesSave();
 	}
 
+	// function for selecting the shape
 	function onShapeClicked(shape) {
 		print(shape.appId + ": shape clicked\n");
 		selectionSet(shape);
 	}
 
+	// function for deselecting a shape when the map is clicked
 	function onMapClicked() {
 		print("map clicked\n");
 		selectionClear();
 	}
 
+	// function for deleting the clicked shape
 	function onDeleteButtonClicked() {
 		print("delete button clicked\n");
 
@@ -676,6 +743,8 @@ function ShapesMap(_mapContainer, _deleteButton, _clearButton) {
 		}
 	}
 
+	// function for clearing all shapes and deleting them
+	// not currently in use
 	function onClearButtonClicked() {
 		print("clear button clicked\n");
 
@@ -685,11 +754,13 @@ function ShapesMap(_mapContainer, _deleteButton, _clearButton) {
 		shapesSave();
 	}
 
+	// function for printing that the drawing mode was changed and clearing the selection
 	function onDrawingModeChanged() {
 		printDrawingMode(drawingManager);
 		selectionClear();
 	}
 
+	// function that creates the map, drawing manager, adds DOM event listeners, and loads the shapes
 	function onCreate() {
 		_map = createMap(_mapContainer);
 		_drawingManager = drawingManagerCreate(_map);
@@ -706,5 +777,6 @@ function ShapesMap(_mapContainer, _deleteButton, _clearButton) {
 		shapesLoad();
 	}
 
+	// calling the create map function which creates the entire map
 	onCreate();
 }

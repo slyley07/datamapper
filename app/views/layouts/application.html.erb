@@ -32,18 +32,21 @@
 			</h1>
 
 			<ul>
+				<% if @plots.nil? %>
 				<li>
 					<%= link_to 'Map!', plots_path %>
 				</li>
+				<% end %>
 
 				<% if current_user %>
 					<li>
 						<%= link_to 'Logout', logout_path, method: :delete %>
 					</li>
-				<% else %>
-					<li>
-						<%= link_to 'Home', root_path %>
-					</li>
+					<% if !@plots.nil? %>
+						<li>
+							<%= link_to 'Home', root_path %>
+						</li>
+					<% end %>
 				<% end %>
 			</ul>
 		</nav>
