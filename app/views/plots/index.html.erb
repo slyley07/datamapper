@@ -1,24 +1,14 @@
-<%= form_tag('/plots') do %>
-  <%= submit_tag 'Save', class: :saver, remote: :true %>
+<%= form_for('/plots') do |f| %>
+  <%= f.text_field :json, class: :json %>
+  <%= f.submit 'Save', class: :saver, remote: :true %>
 <% end %>
-
-<div class="lookhere">
-  <p> what </p>
-</div>
-
-
 
 <div class="thing">
   <div class="thang">
-    <%= @user.fname %>
-    <br>
-    <%= best_in_place @post, :title, place_holder: "Click me to tell me the title of the paper!" %>
-    <br>
-    <%= best_in_place @post, :website, place_holder: "Click here to tell me the website!" %>
-    <br>
-    <%= submit_tag "Submit!" %>
+    <%= render 'posts/post' %>
   </div>
 </div>
+<input type="button" id="saver" value="Save!">
 
 <input type="button" id="delete-button" value="Delete Shape">
 
@@ -28,9 +18,9 @@
   <div id='map-canvas'></div>
 </div>
 
-
-
-
+<h3 class="info">
+  To add a shape, click on the rectangle, circle, polygon, or polyline icon at the top of the map and start drawing. To tag your plot, click the plot and type in your information.
+</h3>
 
 <script type="text/javascript">
   function initialize() {
@@ -39,6 +29,7 @@
       document.getElementById("delete-button"),
       document.getElementById("clear-button"));
 	}
+  
 
 	google.maps.event.addDomListener(window, 'load', initialize);
 </script>

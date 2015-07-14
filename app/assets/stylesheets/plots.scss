@@ -5,14 +5,43 @@
 body{
   font-family: 'Arimo', sans-serif;
 
+  h2.info {
+      @include span-columns(6);
+      @include shift(5);
+      font-size: 20px;
+      margin-top: 20px;
+  }
+
+  h3.info {
+      @include span-columns(6);
+      @include shift(3);
+      font-size: 20px;
+      margin-top: 20px;
+  }
+
+
   .map {
     @include span-columns(10 of 12);
     @include shift(1 of 12);
+    margin-top: 20px;
 
     #map-canvas{
-      height: 700px;
+      height: 800px;
       margin: 0 auto;
     }
+  }
+
+  .json {
+    display: none;
+  }
+
+  #clear-button {
+    display: none;
+  }
+
+  .saver {
+    @include span-columns(1 of 12);
+    display: none;
   }
 
   input[type=submit] {
