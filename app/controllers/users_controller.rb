@@ -1,7 +1,7 @@
 class UsersController < ApplicationController
   before_action :authenticate_user, only: [:update, :destroy]
   before_action :current_u, only: [:edit, :update, :destroy]
-  
+
   def new
   	@user = User.new
   end
@@ -15,9 +15,9 @@ class UsersController < ApplicationController
 
   def create
   	@user = User.new(user_params)
-  	if @user.save
+   	if @user.save
       session[:user_id] = @user.id
-  		redirect_to @user, notice: 'Your account has been created'
+  		redirect_to @index, notice: 'Your account has been created'
   	else
   		render :new
   	end
@@ -39,7 +39,7 @@ class UsersController < ApplicationController
   private
 
   def user_params
-		params.require(:user).permit(:username, :email, :password, :password_confirmation, :fname, :lname, :website, :affiliation)
+		params.require(:user).permit(:username, :password, :password_confirmation, :email, :fname, :lname, :website, :affiliation)
   end
 
   def current_u
