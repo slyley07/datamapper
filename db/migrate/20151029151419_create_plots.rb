@@ -4,8 +4,8 @@ class CreatePlots < ActiveRecord::Migration
       t.integer :post_id
       t.integer :user_id
       t.integer :shape_id
-
-      t.timestamps null: false
+      t.text :json
+      t.string :shape
     end
   end
 end

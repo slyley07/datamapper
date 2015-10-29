@@ -11,24 +11,20 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151028203922) do
+ActiveRecord::Schema.define(version: 20151029152755) do
 
-  create_table "comments", force: :cascade do |t|
-    t.integer  "user_id"
-    t.integer  "datam_id"
-    t.string   "comment"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+  create_table "commments", force: :cascade do |t|
+    t.integer "user_id"
+    t.integer "plot_id"
+    t.string  "comment"
   end
 
   create_table "plots", force: :cascade do |t|
-    t.integer  "post_id"
-    t.integer  "user_id"
-    t.integer  "shape_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.text     "json"
-    t.string   "shape"
+    t.integer "post_id"
+    t.integer "user_id"
+    t.integer "shape_id"
+    t.text    "json"
+    t.string  "shape"
   end
 
   create_table "posts", force: :cascade do |t|
@@ -38,24 +34,20 @@ ActiveRecord::Schema.define(version: 20151028203922) do
     t.string   "title"
     t.string   "address"
     t.text     "description"
-    t.datetime "created_at",  null: false
-    t.datetime "updated_at",  null: false
     t.integer  "plot_id"
   end
 
   create_table "users", force: :cascade do |t|
-    t.string   "username"
-    t.string   "email"
-    t.string   "password"
-    t.string   "fname"
-    t.string   "lname"
-    t.string   "website"
-    t.string   "affiliation"
-    t.datetime "created_at",            null: false
-    t.datetime "updated_at",            null: false
-    t.string   "password_confirmation"
-    t.string   "password_hash"
-    t.string   "password_salt"
+    t.string "username"
+    t.string "email"
+    t.string "password"
+    t.string "fname"
+    t.string "lname"
+    t.string "website"
+    t.string "affiliation"
+    t.string "password_confirmation"
+    t.string "password_hash"
+    t.string "password_salt"
   end
 
 end

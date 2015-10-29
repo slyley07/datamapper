@@ -7,8 +7,7 @@ class CreatePosts < ActiveRecord::Migration
       t.string :title
       t.string :address
       t.text :description
-
-      t.timestamps null: false
+      t.integer :plot_id
     end
   end
 end
